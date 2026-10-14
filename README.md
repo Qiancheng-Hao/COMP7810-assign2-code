@@ -268,3 +268,15 @@ These have no standard answers. They are the real point of this lab:
    `totalCollateral()` invariant?
 
 Question 4 is the door into next week's RWA lab.
+
+---
+
+## Architecture diagram
+
+The arrows show contract calls; the notes show how balances change. Users approve the
+vault to spend mUSDC before depositing. On redemption, the vault burns the caller's
+sUSD using its `MINTER_ROLE`, then returns mUSDC. The current implementation requires
+no sUSD allowance for redemption. The deployer retains the admin, minter and pauser
+roles; pausing sUSD also blocks the burn needed for redemption.
+
+![Stablecoin contracts, permissions, and deposit/redeem flows](architecture.png)

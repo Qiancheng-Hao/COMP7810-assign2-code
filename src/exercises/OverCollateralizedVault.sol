@@ -112,7 +112,7 @@ contract OverCollateralizedVault {
     /// @dev The product carries 18 + 8 = 26 decimals and you want 6 — divide by 10 to the
     ///      what?
     function collateralValue(uint256 amount) public view returns (uint256) {
-        revert("TODO Ex5.1: collateralValue");
+        return amount * collateralPrice() / 1e20;
     }
 
     // ==================================================================
@@ -124,7 +124,14 @@ contract OverCollateralizedVault {
     /// @dev Record the debt first and check second, so that collateralRatio() is looking
     ///      at the post-mint state
     function mintStable(uint256 amount) external {
-        revert("TODO Ex5.2: mintStable");
+        if (amount == 0) revert ZeroAmount();
+
+        // Check debt after this mint; a revert restores the previous debt.
+        debtOf[msg.sender] += amount;
+        if (collateralRatio(msg.sender) < MIN_COLLATERAL_RATIO) revert Undercollateralized();
+
+        stable.mint(msg.sender, amount);
+        emit StableMinted(msg.sender, amount);
     }
 
     // ==================================================================
@@ -134,7 +141,15 @@ contract OverCollateralizedVault {
     /// @notice Withdraw `amount` units of collateral; the ratio afterwards must not fall
     ///         below MIN_COLLATERAL_RATIO
     function redeemCollateral(uint256 amount) external {
-        revert("TODO Ex5.3: redeemCollateral");
+        if (amount == 0) revert ZeroAmount();
+        if (amount > collateralOf[msg.sender]) revert InsufficientCollateral();
+
+        // Check the remaining collateral before transferring it; a revert restores this deduction.
+        collateralOf[msg.sender] -= amount;
+        if (collateralRatio(msg.sender) < MIN_COLLATERAL_RATIO) revert Undercollateralized();
+
+        collateral.safeTransfer(msg.sender, amount);
+        emit CollateralRedeemed(msg.sender, amount);
     }
 
     // ==================================================================
@@ -148,6 +163,23 @@ contract OverCollateralizedVault {
     ///      take everything the user has left — the shortfall is bad debt, and that is
     ///      exactly where liquidation is most fragile.
     function liquidate(address user) external {
-        revert("TODO Ex5.4: liquidate");
+        if (collateralRatio(user) >= LIQUIDATION_RATIO) revert NotLiquidatable();
+
+        // Keep the repayment amount available after clearing the user's debt below.
+        uint256 debt = debtOf[user];
+        // Debt has 6 decimals and price has 8; multiplying by 1e20 yields 18-decimal collateral.
+        uint256 collateralSeized = debt * (RATIO_PRECISION + LIQUIDATION_BONUS) * 1e20 / (RATIO_PRECISION * collateralPrice());
+        
+        // Cap the award to avoid taking other users' collateral from the shared vault.
+        if (collateralSeized > collateralOf[user]) 
+            collateralSeized = collateralOf[user];
+
+        debtOf[user] = 0;
+        collateralOf[user] -= collateralSeized;
+
+        // The liquidator pays; the borrower may have spent their sUSD. Failure rolls back the reset.
+        stable.burn(msg.sender, debt);
+        collateral.safeTransfer(msg.sender, collateralSeized);
+        emit Liquidated(user, msg.sender, debt, collateralSeized);
     }
 }

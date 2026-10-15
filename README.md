@@ -13,10 +13,10 @@ The core claim, up front:
 
 Pick the track that matches your machine. **Everything after this section is identical for everyone.**
 
-| You are on | Track |
-|---|---|
-| macOS / Linux | **A** — install Foundry locally |
-| Windows | **B** — Codespaces, nothing installed on your machine |
+| You are on    | Track                                                 |
+| ------------- | ----------------------------------------------------- |
+| macOS / Linux | **A** — install Foundry locally                       |
+| Windows       | **B** — Codespaces, nothing installed on your machine |
 
 > `lib/` (`forge-std`, `openzeppelin-contracts`) **ships inside this repository**.
 > Neither track needs `git clone --recursive`, and neither needs `make setup` —
@@ -119,11 +119,11 @@ where to look when you get stuck.
 
 ## 3. What the three contracts do
 
-| File | Role |
-|---|---|
-| `src/MockUSDC.sol` | **The collateral.** A mock USDC: 6 decimals, with a test faucet |
+| File                       | Role                                                                                                            |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `src/MockUSDC.sol`         | **The collateral.** A mock USDC: 6 decimals, with a test faucet                                                 |
 | `src/SimpleStablecoin.sol` | **The stablecoin itself.** ERC-20 + `MINTER_ROLE` (who may mint) + `PAUSER_ROLE` (whether transfers are frozen) |
-| `src/Vault.sol` | **The loop.** Deposit collateral to mint 1:1; burn to take collateral back |
+| `src/Vault.sol`            | **The loop.** Deposit collateral to mint 1:1; burn to take collateral back                                      |
 
 The key invariant: **`vault.totalCollateral() == stable.totalSupply()`**
 
@@ -238,12 +238,12 @@ To search for a fresh counterexample, `rm -rf cache/invariant` first.
 
 ## 6. Submission
 
-| Item | Weight |
-|---|---|
-| Contract correctness + test coverage | 40% |
-| Deployment and Etherscan verification (Tier 2) | 20% |
-| Threat-model analysis (discussion questions) | 25% |
-| Code style and documentation | 15% |
+| Item                                           | Weight |
+| ---------------------------------------------- | ------ |
+| Contract correctness + test coverage           | 40%    |
+| Deployment and Etherscan verification (Tier 2) | 20%    |
+| Threat-model analysis (discussion questions)   | 25%    |
+| Code style and documentation                   | 15%    |
 
 Submit:
 
@@ -280,3 +280,11 @@ no sUSD allowance for redemption. The deployer retains the admin, minter and pau
 roles; pausing sUSD also blocks the burn needed for redemption.
 
 ![Stablecoin contracts, permissions, and deposit/redeem flows](architecture.png)
+
+## Deployment (Sepolia)
+
+| Contract         | Address & link                                                                                                                     |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| MockUSDC         | [0x52e7dbe25860412AdE90f818EB766e0f00a5dFC6](https://sepolia.etherscan.io/address/0x52e7dbe25860412AdE90f818EB766e0f00a5dFC6#code) |
+| SimpleStablecoin | [0xC27CAF558226B2152ae97A7C4BBED9020dbb67F2](https://sepolia.etherscan.io/address/0xC27CAF558226B2152ae97A7C4BBED9020dbb67F2#code) |
+| Vault            | [0x8d381D7Cf79Db1b3f7E903d64ff334d921e22427](https://sepolia.etherscan.io/address/0x8d381D7Cf79Db1b3f7E903d64ff334d921e22427#code) |

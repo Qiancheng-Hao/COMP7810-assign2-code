@@ -288,3 +288,13 @@ roles; pausing sUSD also blocks the burn needed for redemption.
 | MockUSDC         | [0x52e7dbe25860412AdE90f818EB766e0f00a5dFC6](https://sepolia.etherscan.io/address/0x52e7dbe25860412AdE90f818EB766e0f00a5dFC6#code) |
 | SimpleStablecoin | [0xC27CAF558226B2152ae97A7C4BBED9020dbb67F2](https://sepolia.etherscan.io/address/0xC27CAF558226B2152ae97A7C4BBED9020dbb67F2#code) |
 | Vault            | [0x8d381D7Cf79Db1b3f7E903d64ff334d921e22427](https://sepolia.etherscan.io/address/0x8d381D7Cf79Db1b3f7E903d64ff334d921e22427#code) |
+
+## [github link](https://github.com/Qiancheng-Hao/COMP7810-assign2-code)
+
+## forge test
+
+![forge test](forge%20test.png)
+
+## make exercise
+
+![make exercise](make%20exercise.png)
